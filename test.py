@@ -5,7 +5,9 @@ import json
 import datetime
 import copy
 import matplotlib.pyplot as plt
+import timeit
 
+start = timeit.timeit()
 apiKey = '28838a88ae9fed2b8405e3d3d90b1513'
 
 url = 'http://api.reimaginebanking.com/enterprise/bills?key=28838a88ae9fed2b8405e3d3d90b1513'
@@ -24,9 +26,9 @@ categories = {'Food': ['\\sfood\\s', '\\srestaurant',
               'Retail': ['\\sretail', '\\ssport', '\\scloth', '\\sapparel',
                          '\\sfashion', '\\sluxury', 'commerce'],
               'Life': ['\\slandlord', '\\srent', '\\sinsurance',
-                       '\\scar', '\\sPlane', '\\sAirlines']}
+                       '\\scar', '\\sPlane', '\\sAirlines', '\\sinvestment', '\\sbank']}
 sorted = {'Food': [], 'Entertainment': [], 'Gas': [], 'Retail': [], 'Life': [], 'other': []}
-max_data_num = 1000  # change this if you want, this is how much transactions you wanna sort
+max_data_num = 3000  # change this if you want, this is how much transactions you wanna sort
 
 Food_sum = 0
 Enter_sum = 0
@@ -85,13 +87,14 @@ def categorize(company_name):
         for cata in categories:
             for attri in categories[cata]:
                 try:
-                    look_up = wikipedia.summary(choice)
+                    look_up = wikipedia.summary(choice, sentences=5)
                     x = re.search(attri, look_up, flag)
                 except Exception:
                     x = None
                 if (x is not None):
                     database[company_name] = cata
                     return cata
+    database[company_name] = 'other'
     return 'other'
 
 
@@ -158,7 +161,8 @@ sizes = [200 * Food_sum/Total_SUM, 200 * Enter_sum/Total_SUM, 200 * Gas_sum/Tota
 colors = ['gold', 'red', 'blue', 'yellow', 'pink', 'green', 'black']
 explode = (0.1, 0.1, 0.1, 0.1, 0.1, 0.1)  # explode 1st slice
 
-
+end = timeit.timeit()
+print(f"RUNNNNN TIME: {end-start}")
 plt.pie(sizes, explode=explode, labels=labels, colors=colors,
         autopct='%1.1f%%', shadow=True, startangle=140)
 plt.show()
